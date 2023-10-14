@@ -1,0 +1,12 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    <p>Точно нужно удалить — {{painter.name}}?</p>
+    <a href="{{request.META.HTTP_REFERER}}">Вернуться на главную</a>
+    <input type="submit" value="Удалить" />
+</form>
+
+{% endblock content %}

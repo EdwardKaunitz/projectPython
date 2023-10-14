@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    </style>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+</head>
+<body>
+    <header style="margin-bottom: 10px;">
+    {% include 'navbar.html' %}
+    </header>
+
+    {% if request.user.is_authenticated %}
+    <h1>Hello, {{ request.user }}</h1>
+    {% endif %}
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <main>
+    {% block content %}
+    {% endblock content %}
+    </main>
+    
+    <footer style="margin-top: 10px;">
+    {% include 'navbar.html' %}
+    </footer>
+
+</body>
+</html>

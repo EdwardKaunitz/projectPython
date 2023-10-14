@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>chat</h1>
+
+    <form id="form">
+        <input type="text" name="message" />
+    </form>
+
+    <script>
+        
+        // let url = `ws://${window.location.host}/ws/socket-server/`
+        let url = 'ws://127.0.0.1:8000/ws/socket-server/' 
+        
+        const chatSocket = new WebSocket(url)
+        
+        chatSocket.onmessage = function(e){
+            let data = JSON.parse(e.data)
+            console.log('Data:', data)
+        }
+        
+        </script>
+</body>
+</html>

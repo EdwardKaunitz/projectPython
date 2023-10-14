@@ -1,0 +1,41 @@
+{% extends 'main.html' %}
+
+{% block content %}
+
+<h1>Welcome to {{page}}!</h1>
+
+{% if page == 'login' %}
+<div>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div>
+            <label>Имя пользователя:
+                <input type="text" name="username" placeholder="Имя пользователя">
+            </label>
+        </div>
+        <div>
+            <label>Пароль:
+                <input type="password" name="password" placeholder="Пароль">
+            </label>
+        </div>
+        <input type="submit" value="Войти">
+    </form>
+
+    <p>Еще нет аккаунта?</p>
+    <a href="{% url 'register' %}">Register</a>
+</div>
+
+{% else %}
+<div>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Регистрация">
+    </form>
+
+    <p>Уже есть аккаунт?</p>
+    <a href="{% url 'login' %}">Login</a>
+</div>
+
+{% endif %}
+{% endblock content %}
