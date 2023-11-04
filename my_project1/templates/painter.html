@@ -1,8 +1,63 @@
 {% extends 'main.html' %}
 
 {% block content %}
-
-    <h1>{{painter.name}}</h1>
+    <p>{{ method }}</p>
+    <h1>{{painter}}</h1>
     <p>{{painter.description}}</p>
+
+    <div class="painter-comments">
+        <div>
+            <div class="comment-list">
+                <h3>Messages</h3>
+                <hr>
+                
+                <ul>
+                {% for comment in comments %}
+                <li>
+                    <small>@{{comment.user}} {{comment.created|timesince}}</small>
+                    <p>{{ comment }}</p>
+                    {% if request.user == comment.user %}
+                        <a href="{% url 'commentDelete' comment.id %}">Delete</a>
+                    {% endif %}
+                </li>
+                {% endfor %}
+                </ul>
+            </div>
+
+            {% if request.user.is_authenticated %} 
+            <div class="comment-form">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <input type="text" name="body" placeholder="Comment..">
+                    <input type="submit" value="Send">
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <div>
+            <h3>Users</h3>
+            <hr>
+
+            {% for participant in participants %}
+            <div class="participant">
+                <p>@{{ user.username }}</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <script>
+            const participants = document.querySelectorAll('.participant')
+            participants.forEach((participant) => {
+                const paragraph = participant.querySelector('p')
+                participant.addEventListener('click', (e) => {
+                    e.target.style.background = 'pink';
+                    // participant.style.background = 'pink';
+                    paragraph.style.color = 'orange';
+                })
+            })
+        </script>
+
+    </div>
 
 {% endblock content %}

@@ -10,6 +10,7 @@ urlpatterns = [
 
     path('', views.home, name="home"),
     path('painter/<str:pk>/', views.painter, name="painter"),
+    path('comment_delete/<str:pk>/', views.comment_delete, name='commentDelete'),
 
     path('painter_form/', views.painter_form, name="painterForm"),
     path('painter_update/<str:pk>/', views.painter_update, name="painterUpdate"),

@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
-# from django.http import HttpResponse
-
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Painter
+from django.db.models import Q
+from .models import Painter, Raiting, Message
 from .forms import PainterForm
 
 # painters = [
@@ -37,7 +37,7 @@ def loginPage(request):
             login(request, user)
             return redirect('home')
         else:
-            messages.error(request, 'Юзер не найден | в пароле ошибка')
+            messages.error(request, 'В пароле ошибка')
     
     return render(request, 'login_register.html', {'page': "login"})
 
@@ -66,7 +66,45 @@ def logoutUser(request):
 def home(request):
     # return HttpResponse('Home page')
     painters = Painter.objects.all()
-    context = {'painters': painters}
+    painter_count = painters.count()
+    
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    # painters = Painter.objects.filter(raiting__raiting__icontains = q)
+    painters = Painter.objects.filter(
+        Q(user__username__icontains = q) |
+        Q(raiting__raiting__icontains = q) |
+        Q(name__icontains = q) |
+        Q(description__icontains = q)
+    )
+    painterFilter_count = painters.count()
+
+    raitings = Raiting.objects.all()
+    users = User.objects.all()
+    context = {
+        'painters': painters, 
+        'raitings': raitings, 
+        'users': users,
+        'painter_count': painter_count,
+        'painterFilter_count': painterFilter_count
+    }
+
+    # if (painter_count != painterFilter_count):
+    #     context = {
+    #         'painters': painters, 
+    #         'raitings': raitings, 
+    #         'users': users,
+    #         'painter_count': painter_count,
+    #         'painterFilter_count': painterFilter_count
+    #     }
+    # else:
+    #     context = {
+    #         'painters': painters, 
+    #         'raitings': raitings, 
+    #         'users': users,
+    #         'painter_count': painter_count,
+    #         'painterFilter_count': ''
+    #     }
+
     return render(request, 'home.html', context)
 
 
@@ -77,10 +115,26 @@ def painter(request, pk):
     # for i in painters:
     #     if i['id'] == int(pk):
     #         painter = i
-
     painter = Painter.objects.get(id=pk)
-    context = {'painter': painter}
+
+    if request.method == 'POST':
+        message = Message.objects.create(
+            user=request.user,
+            painter=painter,
+            body=request.POST.get('body')
+        )
+        painter.participants.add(request.user)
+        return redirect('painter', pk=painter.id)
+    
+    # comments = painter.message_set.all().order_by('-created')
+    method = request.method
+    comments = painter.message_set.all()
+    participants = painter.participants.all()
+    
+    context = {'method': method, 'painter': painter, 'comments': comments, 'participants': participants}
     return render(request, 'painter.html', context)
+
+
 
 @login_required(login_url='login')
 def painter_form(request):
@@ -105,9 +159,24 @@ def painter_update(request, pk):
     return render(request, "painter_form.html", {'form': form})
 
 
+@login_required(login_url='login')
 def painter_delete(request, pk):
     painter = Painter.objects.get(id=pk)
     if request.method == 'POST':
         painter.delete()
         return redirect('home')
     return render(request, "delete.html", {'painter': painter})
+
+
+@login_required(login_url='login')
+def comment_delete(request, pk):
+    comment = Message.objects.get(id=pk)
+
+    if request.user != comment.user:
+        return HttpResponse('Ошибка доступа')
+
+    if request.method == 'POST':
+        comment.delete()
+        return redirect('home')
+    
+    return render(request, "delete.html", {'comment': comment, 'comment_page': True})
