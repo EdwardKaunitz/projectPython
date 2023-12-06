@@ -2,13 +2,6 @@ body {
     background: rgb(247, 239, 181);
 }
 
-.home-container {
-    display: grid;
-    grid-template-columns: 1fr 5fr;
-    gap: 20px;
-    padding: 28px;
-    background: white;
-}
 .home-container ol {
     margin-top: 0;
 }

@@ -69,7 +69,6 @@ def home(request):
     painter_count = painters.count()
     
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-    # painters = Painter.objects.filter(raiting__raiting__icontains = q)
     painters = Painter.objects.filter(
         Q(user__username__icontains = q) |
         Q(raiting__raiting__icontains = q) |
@@ -80,12 +79,19 @@ def home(request):
 
     raitings = Raiting.objects.all()
     users = User.objects.all()
+    comments = Message.objects.filter(
+        Q(painter__name__icontains = q) |
+        Q(body__icontains = q)
+    )
+
     context = {
         'painters': painters, 
         'raitings': raitings, 
         'users': users,
+        'comments': comments,
         'painter_count': painter_count,
-        'painterFilter_count': painterFilter_count
+        'painterFilter_count': painterFilter_count,
+        'action_url': 'home',
     }
 
     # if (painter_count != painterFilter_count):
@@ -108,6 +114,14 @@ def home(request):
     return render(request, 'home.html', context)
 
 
+def userProfile(request, pk):
+    username = User.objects.get(id=pk)
+    painters = username.painter_set.all()
+    painter_message = username.message_set.all()
+    raitings = Raiting.objects.all()
+    return render(request, 'profile.html', {'username': username, 'painters': painters, 'painter_message': painter_message, 'raitings': raitings})
+
+
 def painter(request, pk):
     # return HttpResponse('Painter')
     
@@ -128,12 +142,23 @@ def painter(request, pk):
     
     # comments = painter.message_set.all().order_by('-created')
     method = request.method
-    comments = painter.message_set.all()
+    # comments = painter.message_set.all()
     participants = painter.participants.all()
-    
-    context = {'method': method, 'painter': painter, 'comments': comments, 'participants': participants}
-    return render(request, 'painter.html', context)
 
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    comments = painter.message_set.filter(body__icontains = q)
+    # painters = Painter.objects.filter(raiting__raiting__icontains = q)
+    
+    
+    context = {
+        'method': method, 
+        'painter': painter, 
+        'comments': comments, 
+        'participants': participants,
+        'painter_id': painter.id,
+        'q': q
+    }
+    return render(request, 'painter.html', context)
 
 
 @login_required(login_url='login')
@@ -141,10 +166,19 @@ def painter_form(request):
     form = PainterForm()
     # context = {'form': form}
     if request.method == 'POST':
-        form = PainterForm(request.POST)
+
+        # form = PainterForm(request.POST)
+        # if form.is_valid():
+        #     form = form.save(commit=False)
+        #     form.user = request.user
+        #     form.save()
+        #     return redirect('home')
+
+        form = PainterForm(request.POST, instance=Painter(user=request.user))
         if form.is_valid():
             form.save()
             return redirect('home')
+        
     return render(request, "painter_form.html", {'form': PainterForm()})
 
 

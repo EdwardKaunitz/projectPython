@@ -1,0 +1,20 @@
+<h3>Raiting</h3>
+<hr>
+<ul>
+    <li><a href="{% url 'home' %}">All</a></li>
+    
+    {% for raiting in raitings %}
+    <li><a href="{% url 'home' %}?q={{ raiting }}">{{ raiting }}</a></li>
+    {% endfor %}
+</ul>
+
+
+<h3>Users</h3>
+<hr>
+<ul>
+    <li><a href="{% url 'home' %}">All</a></li>
+    
+    {% for user in users %}
+    <li>@ <a href="{% url 'home' %}?q={{ user }}">{{ user }}</a></li>
+    {% endfor %}
+</ul>

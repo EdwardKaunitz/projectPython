@@ -1,20 +1,22 @@
 {% extends 'main.html' %}
 
 {% block content %}
-    <p>{{ method }}</p>
-    <h1>{{painter}}</h1>
-    <p>{{painter.description}}</p>
+    
+    <div class="content-center">
+        <h1>{{ painter }}</h1>
+        <p>{{ painter.description }}</p>
+    </div>
 
-    <div class="painter-comments">
+    <div class="painter-comments content-center">
         <div>
             <div class="comment-list">
-                <h3>Messages</h3>
+                <h3>Messages</h3>{% include 'component_search.html' with action_url='painter' url_parametr=painter_id %}
                 <hr>
                 
                 <ul>
                 {% for comment in comments %}
                 <li>
-                    <small>@{{comment.user}} {{comment.created|timesince}}</small>
+                    <small>@{{comment.user}} {{ comment.created|timesince }}</small>
                     <p>{{ comment }}</p>
                     {% if request.user == comment.user %}
                         <a href="{% url 'commentDelete' comment.id %}">Delete</a>

@@ -1,0 +1,8 @@
+{% if action_url == 'painter' %}
+<form action="{% url action_url url_parametr %}" method="get">
+{% else %}
+<form action="{% url action_url %}" method="get">
+{% endif %}
+
+    <input type="text" name="q" placeholder="search">
+</form>

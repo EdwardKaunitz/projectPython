@@ -1,0 +1,18 @@
+<h3>Activity</h3>
+<div>
+    <hr>
+</div>
+<p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Dolor soluta repellat modi doloribus perferendis possimus ab reprehenderit.</p>
+
+{% for comment in comments %}
+<div>
+    
+    {% if request.user == comment.user %}
+        <a href="{% url 'commentDelete' comment.id %}">Delete</a><br>
+    {% endif %}
+    
+    <small>@{{comment.user}} {{comment.created|timesince}}</small><br>
+    <small>На странице "{{comment.painter}}"</small>
+    <p style="padding-left: 10px;">{{comment.body}}</p>
+</div>
+{% endfor %}

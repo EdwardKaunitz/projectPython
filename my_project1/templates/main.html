@@ -5,16 +5,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>
+        {% block title %}
+        Mysite
+        {% endblock title %}
+    </title>
     <style>
         body {
-            max-width: 600px;
+            /* max-width: 1000px; */
             margin: 0 auto;
         }
+
+        .wrap {
+            display: grid;
+            grid-template-columns: 0 [wide-start] auto [center-start] 1000px [center-end] auto [wide-end] 0;
+            background: white;
+        }
+        .content-center {
+            grid-column: center;
+        }
+        .content-wide {
+            grid-column: center;
+        }
+        .wrap>form{
+            grid-column: center;
+        } 
+
+        .home-container {
+            display: grid;
+            /* grid-template-columns: 1fr 3fr 1fr;
+            gap: 20px; */
+            grid-template-columns: 10px [block1-start] 1fr [block1-end] 30px [block2-start] 3fr [block2-end] 20px [block3-start] 1fr [block3-end] 10px;    
+            padding: 28px;
+        }
+
+
+        .home-container>div:nth-child(1) {
+            grid-column: block1;
+        }
+        .home-container>div:nth-child(2) {
+            grid-column: block2;
+        }
+        .home-container>div:nth-child(3) {
+            grid-column: block3;
+        }
+
     </style>
-   <link rel="stylesheet" href="{% static 'styles/style6.css' %}">
+   <link rel="stylesheet" href="{% static 'styles/style7.css' %}">
 </head>
 <body>
+
     <header style="margin-bottom: 10px;">
     {% include 'navbar.html' %}
     </header>
@@ -24,23 +64,22 @@
     {% endif %}
 
     {% if messages %}
-    <ul class="messages">
+    <ul class="messages wrap">
         {% for message in messages %}
-        <li>{{ message }}</li>
+        <li class="content-center">{{ message }}</li>
         {% endfor %}
     </ul>
     {% endif %}
 
-    <main>
-    {% block content %}
-    {% endblock content %}
+    <main class="wrap">
+        {% block content %}
+        {% endblock content %}
     </main>
     
 
     <br><br><br><br>
     <footer style="margin-top: 10px;">
     {% include 'navbar.html' %}
-    
     </footer>
 
 </body>

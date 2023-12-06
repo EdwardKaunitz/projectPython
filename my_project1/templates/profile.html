@@ -1,0 +1,26 @@
+{% extends 'main.html' %}
+
+{% block title %}
+    Profile
+{% endblock title %}
+
+{% block content %}
+    <h1 class="content-center">{{ username }}</h1>
+
+    <div class="home-container content-center">
+
+        <div>
+            
+            {% include 'component_filter.html' %}
+        </div>
+        <div>
+            {% include 'component_feed.html' %}
+        </div>
+        <div>
+            {% include 'component_activity.html' %}
+        </div>
+
+    </div>
+
+
+{% endblock content %}
